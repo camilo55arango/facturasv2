@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FacturaPro - Sistema de Facturación Técnica</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f4ff',
+                            100: '#e0e9fe',
+                            200: '#c1d3fe',
+                            300: '#92b3fd',
+                            400: '#5c89f9',
+                            500: '#135bec',
+                            600: '#254adb',
+                            700: '#1c39af',
+                            800: '#1c318e',
+                            900: '#1d2c73',
+                            950: '#111946',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- PDF Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gray-50 text-slate-900">
+
+    <!-- Controls -->
+    <div class="controls no-print">
+        <button id="btnDownload" onclick="handleDownloadPDF()">⬇️ Descargar PDF</button>
+        <button class="add-row-btn" onclick="handleClear()" style="margin-left: 10px;">🧹 Limpiar</button>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar Cliente..." class="search-input"
+                onkeyup="filterClients()" onfocus="showResults()" onblur="hideResults()">
+            <div id="searchResults" class="search-results">
+                <!-- Results populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Invoice Container -->
+    <div class="invoice-container" id="invoice-content">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo-section">
+                <img src="multimedia/images.jpg" alt="Logo Taller"
+                    style="width: 100%; max-height: 180px; object-fit: contain; mix-blend-mode: multiply;">
+            </div>
+
+            <div class="seller-info">
+                <div class="seller-name" id="issuerName">Albeiro Vallejo S.</div>
+                <div id="issuerNit">Nit. 8461728-1</div>
+                <div style="font-size: 10px; margin-top: 5px;" id="issuerInfo">NO RESPONSABLE DE IVA</div>
+            </div>
+
+            <div class="invoice-box">
+                <div class="invoice-box-header">DOCUMENTO EQUIVALENTE<br>A LA FACTURA</div>
+                <div class="invoice-number">
+                    <input type="text" id="invoiceNumber" class="text-center text-red-600 font-black" value="0000">
+                </div>
+                <div class="invoice-contact" id="issuerContact">
+                    Cra. 102 No. 33B-60 Int 101<br>
+                    3015194153<br>
+                    albeirovallejo3@gmail.com
+                </div>
+            </div>
+        </div>
+
+        <!-- CLIENT INFO -->
+        <div class="client-section">
+            <div class="row">
+                <div class="col" style="width: 70%;">
+                    <span class="label">Cliente:</span>
+                    <input type="text" id="clientName">
+                </div>
+                <div class="col" style="width: 30%;">
+                    <span class="label">Nit:</span>
+                    <input type="text" id="clientNit">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="width: 70%;">
+                    <span class="label">Dirección:</span>
+                    <input type="text" id="clientAddress">
+                </div>
+                <div class="col" style="width: 30%;">
+                    <span class="label">Teléfono:</span>
+                    <input type="text" id="clientPhone">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="width: 35%;">
+                    <span class="label">Fecha de Factura:</span>
+                    <input type="text" id="issueDate">
+                </div>
+                <div class="col" style="width: 35%;">
+                    <span class="label">Fecha Vencimiento:</span>
+                    <input type="text" id="dueDate">
+                </div>
+                <div class="col" style="width: 30%;">
+                    <span class="label">Forma de Pago:</span>
+                    <input type="text" id="paymentMethod">
+                </div>
+            </div>
+        </div>
+
+        <!-- ITEMS TABLE -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-cant">CANT</th>
+                        <th class="col-desc">DESCRIPCIÓN</th>
+                        <th class="col-unit">VR. UNITARIO</th>
+                        <th class="col-total">VALOR TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsTableBody">
+                    <!-- Rows generated by JS -->
+                </tbody>
+                <tfoot>
+                    <!-- Footer Rows -->
+                    <tr>
+                        <td colspan="3" class="footer-label">Costo de mano de obra</td>
+                        <td>
+                            <input type="text" id="laborCost" style="text-align: right;" placeholder="$"
+                                oninput="formatCurrencyInput(this); calculateTotal();">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="footer-label">Costo de material</td>
+                        <td>
+                            <input type="text" id="materialCost" style="text-align: right;" placeholder="$"
+                                oninput="formatCurrencyInput(this); calculateTotal();">
+                        </td>
+                    </tr>
+                    <tr style="height: 60px;">
+                        <td colspan="2" class="legal-text">
+                            Esta Factura de Venta, se asimila en todos sus efectos a una letra de cambio, según art 774
+                            y 775 del código de comercio
+                        </td>
+                        <td style="padding: 0; background-color: black;">
+                            <div class="total-box-label">VALOR<br>TOTAL</div>
+                        </td>
+                        <td class="total-box-value">
+                            <div style="display: flex; align-items: center; justify-content: flex-end;">
+                                <input type="text" id="grandTotal" readonly
+                                    style="text-align: right; width: 95%; padding-right: 5px;">
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- FOOTER OBS -->
+        <div class="footer-obs">
+            <strong>Observaciones:</strong>
+            <textarea id="observations" rows="2"
+                style="resize: none; flex: 1; text-align: left; border: none; background: transparent; padding: 0; font-size: inherit; font-family: inherit;">Retención por servicios del 4% y compras del 2,5%
+por régimen simplificado declarante de renta</textarea>
+        </div>
+
+        <div class="signatures">
+            <img src="multimedia/firma.png" alt="Firma" style="height: 150px; display: block; margin: 0 auto;">
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
