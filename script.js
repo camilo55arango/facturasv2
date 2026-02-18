@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load Clients
     try {
-        const response = await fetch('clients.json');
+        const response = await fetch('clientes.json');
         if (response.ok) {
             CLIENTS_DB = await response.json();
             console.log("Clients loaded:", CLIENTS_DB.length);
@@ -126,15 +126,15 @@ function filterClients() {
     const div = document.getElementById('searchResults');
     div.innerHTML = '';
 
+    let filtered = [];
     if (!filter) {
-        div.style.display = 'none';
-        return;
+        filtered = CLIENTS_DB;
+    } else {
+        filtered = CLIENTS_DB.filter(c =>
+            (c.name && c.name.toLowerCase().includes(filter)) ||
+            (c.nit && c.nit.toLowerCase().includes(filter))
+        );
     }
-
-    const filtered = CLIENTS_DB.filter(c =>
-        (c.name && c.name.toLowerCase().includes(filter)) ||
-        (c.nit && c.nit.toLowerCase().includes(filter))
-    );
 
     if (filtered.length > 0) {
         filtered.forEach(c => {
@@ -152,10 +152,8 @@ function filterClients() {
 }
 
 function showResults() {
-    const input = document.getElementById('searchInput');
-    if (input.value.length > 0) {
-        document.getElementById('searchResults').style.display = 'block';
-    }
+    filterClients();
+    document.getElementById('searchResults').style.display = 'block';
 }
 
 function hideResults() {
