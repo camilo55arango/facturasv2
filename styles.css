@@ -114,6 +114,9 @@ input[type=number] {
     text-align: center;
     height: 30px;
     padding: 0;
+    letter-spacing: 5px;
+    text-indent: 5px;
+    /* Offset to center text with letter-spacing */
     width: 100%;
     display: inline-block;
     /* Ensure it behaves as a block for margins */
@@ -151,9 +154,10 @@ input[type=number] {
 
 /* Ensure inputs in client section don't fill the huge row */
 .client-section input {
-    height: 28px;
-    font-size: 14px;
-    margin-top: 2px;
+    height: 31px;
+    font-size: 13px;
+    margin-top: 0px;
+    margin-bottom: 0px;
     font-weight: normal;
 }
 
@@ -334,31 +338,71 @@ td input {
     flex-direction: column;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.add-row-btn {
-    background-color: #28a745;
-}
-
-/* Buscador de clientes */
-.search-container {
-    position: relative;
-    margin-top: 10px;
-}
-
+/* Botones y Inputs de búsqueda unificados */
+button,
+.add-row-btn,
+#btnDownload,
+.add-row-btn-ss,
 .search-input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 12px 24px;
+    background-color: #4c1d95 !important;
+    /* Morado Oscuro con !important para asegurar */
+    color: white !important;
+    border: 1px solid #4c1d95;
+    /* Borde del mismo color */
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    font-size: 14px;
+    /* Tamaño de letra legible */
+
+    /* New Alignment Styles */
     width: 100%;
+    text-align: left;
+    display: flex;
+    /* Para mejor control si hay iconos */
+    align-items: center;
+    justify-content: flex-start;
+    /* Alineación izquierda */
+}
+
+/* Hover effects */
+button:hover,
+.add-row-btn:hover,
+#btnDownload:hover {
+    background-color: #5b21b6 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15);
+}
+
+button:active,
+.add-row-btn:active,
+#btnDownload:active {
+    transform: translateY(0);
+}
+
+/* Search Input specifics (to override default input styles) */
+.search-input {
+    width: 100%;
+    cursor: text;
+    /* Restaurar cursor de texto para input */
+    margin-top: 5px;
+    /* Espacio extra */
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+    /* Placeholder blanco semi-transparente */
+}
+
+.search-input:focus {
+    outline: none;
+    background-color: #5b21b6 !important;
+    /* Ligeramente más claro al enfocar */
+    border-color: #7c3aed;
 }
 
 .search-results {
@@ -368,7 +412,7 @@ button {
     width: 100%;
     background: white;
     border: 1px solid #ccc;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
@@ -385,6 +429,41 @@ button {
     background-color: #f0f0f0;
 }
 
+
+/* Toggle Button Styles */
+.toggle-btn {
+    flex: 1;
+    /* Equal width */
+    padding: 8px 16px;
+    background-color: transparent !important;
+    /* Transparent by default */
+    color: #4c1d95 !important;
+    border: 1px solid #4c1d95;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-align: center;
+    /* Center text */
+    display: block;
+    /* Override flex display from generic button */
+}
+
+.toggle-btn.selected {
+    background-color: #4c1d95 !important;
+    /* Filled when selected */
+    color: white !important;
+}
+
+.toggle-btn:hover {
+    background-color: #f3e8ff !important;
+    /* Light purple hover for unselected */
+}
+
+.toggle-btn.selected:hover {
+    background-color: #5b21b6 !important;
+    /* Darker purple hover for selected */
+}
 
 @media print {
     @page {
