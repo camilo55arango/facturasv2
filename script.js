@@ -35,7 +35,7 @@ const CLIENTS_DB = [
     {
         "id": "5",
         "name": "Condominio Arandano de la Calleja",
-        "sname": "Arandano_Calleja",
+        "sname": "Arandano",
         "nit": "900915804-7",
         "address": "Carrera 23A # 26 sur 02"
     },
@@ -66,6 +66,13 @@ const CLIENTS_DB = [
         "sname": "Hacienda_San_Jose",
         "nit": "900305790-5",
         "address": "Carrera 20 # 22A - 30"
+    },
+        {
+        "id": "10",
+        "name": "Condominio Avellano de la Calleja",
+        "sname": "Avellano",
+        "nit": "901334059-6",
+        "address": "Carrera 23A # 25 sur - 30"
     }
 ];
 
